@@ -1,0 +1,6 @@
+Demo API Calls with jQuery
+$.ajax({type:"GET",url:"/api/Contacts", success:function(result){debugger}});
+$.ajax({type:"GET",url:"/api/Contacts/1", success:function(result){debugger}});
+$.ajax({type:"PUT",url:"/api/Contacts/",data:JSON.stringify({FirstName:"Sean",LastName:"Smith",Email:"strmshdw@gmail.com"}), success:function(result){debugger}});
+$.ajax({type:"PUT",url:"/api/Contacts/",contentType: "application/json;charset=utf-8",data:JSON.stringify({id:1,firstName:"Sean",lastName:"Smith",email:"different@gmail.com"}), success:function(result){debugger}});
+$.ajax({type:"DELETE",url:"/api/Contacts/6", success:function(result){debugger}});
