@@ -173,6 +173,7 @@
     <Content Include="Scripts\libraries\require.js" />
     <Content Include="Scripts\libraries\text.js" />
     <Content Include="Scripts\services\contactService.js" />
+    <Content Include="Scripts\templates\contacts.htm" />
     <Content Include="Scripts\views\contacts.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
