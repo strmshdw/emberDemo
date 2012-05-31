@@ -1,2 +1,5 @@
-﻿<ul>{{#each App.contactsController}}<li>{{Id}}: {{FirstName}}</li>{{/each}}</ul>
-{{#view App.AddContactView}}Add{{/view}}
+﻿{{#view App.AddContactView}}Add{{/view}}{{#view App.RemoveContactsView}}Remove{{/view}}
+<ul>
+    {{#each App.contactsController}}<li>{{view Ember.Checkbox valueBinding="isSelected" }} {{Id}}: {{#view App.DeleteContactView contentBinding="this"
+        }}Delete: {{content.FirstName}}{{/view}}</li>{{/each}}
+</ul>
