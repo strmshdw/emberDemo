@@ -36,18 +36,18 @@ namespace emberDemo.API
 
         }
 
-        public int Put(Contact contact)
+        public int Put(Contact value)
         {
             var result = 0;
 
-            if (contact.Id > 0)
+            if (value.Id > 0)
             {
-                _service.Update(contact);
-                result = contact.Id;
+                _service.Update(value);
+                result = value.Id;
             }
             else
             {
-                result = _service.Add(contact);
+                result = _service.Add(value);
             }
 
             return result;
