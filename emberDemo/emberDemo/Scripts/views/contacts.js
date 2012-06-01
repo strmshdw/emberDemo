@@ -2,12 +2,13 @@
     baseUrl: '',
     paths: {
         'jquery': 'scripts/libraries/jquery-1.6.2.min',
+        'jqueryui': 'scripts/libraries/jquery-ui-1.8.11.min',
         'ember': 'scripts/libraries/ember-0.9.8.1.min',
         'text': 'scripts/libraries/text'
     }
 });
 
-require(['jquery', 'ember', 'scripts/services/contactService', 'text!scripts/templates/contacts.htm'], function ($, _ember, cs, template) {
+require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text!scripts/templates/contacts.htm'], function ($, jqueryui, _ember, cs, template) {
     window.App = Ember.Application.create({ rootElement: '#app',
         ready: function () {
             App.contactsController.getAll();
@@ -15,11 +16,11 @@ require(['jquery', 'ember', 'scripts/services/contactService', 'text!scripts/tem
     });
 
     App.Contact = Ember.Object.extend({
-        FirstName: null,
-        LastName: null,
-        Email: null,
+        FirstName: '',
+        LastName: '',
+        Email: '',
         Priority: -1,
-        Phone: null,
+        Phone: '',
         isSelected: false,
         toJSON: function () {
             return this.getProperties('FirstName', 'LastName', 'Email', 'Priority', 'Phone');
@@ -28,6 +29,7 @@ require(['jquery', 'ember', 'scripts/services/contactService', 'text!scripts/tem
 
     App.contactsController = Ember.ArrayController.create({
         content: [],
+        selectedContact: null,
         getAll: function () {
             cs.getAll(function (contacts) {
                 App.contactsController.updateContent(contacts);
@@ -40,7 +42,7 @@ require(['jquery', 'ember', 'scripts/services/contactService', 'text!scripts/tem
                 _this.pushObject(contact);
             });
         },
-        get: function (id) {
+        getById: function (id) {
             cs.get(id);
         },
         remove: function (id) {
@@ -65,6 +67,11 @@ require(['jquery', 'ember', 'scripts/services/contactService', 'text!scripts/tem
             var i;
             for (i = 0; i < this.content.length; i++) {
                 if (this.content[i].get('isSelected')) {
+
+                    if (this.get('selectedContact') === this.content[i]) {
+                        this.set('selectedContact', null);
+                    }
+
                     this.remove(this.content[i].get('Id'));
                 }
             }
@@ -86,14 +93,14 @@ require(['jquery', 'ember', 'scripts/services/contactService', 'text!scripts/tem
     App.AddContactView = Ember.View.extend({
         tagName: 'a',
         attributeBindings: ['href'],
-        click: function () { App.contactsController.add(App.Contact.create({ FirstName: 'Sean' })); }
+        click: function () { App.contactsController.set('selectedContact', App.Contact.create()); }
     });
 
-    App.DeleteContactView = Ember.View.extend({
+    App.ContactItemView = Ember.View.extend({
         tagName: 'span',
         eventManager: {
             click: function (event, view) {
-                App.contactsController.remove(view.content.Id);
+                App.contactsController.set('selectedContact', view.content);
             }
         }
     });
@@ -101,6 +108,30 @@ require(['jquery', 'ember', 'scripts/services/contactService', 'text!scripts/tem
     App.RemoveContactsView = Ember.View.extend({
         click: function () {
             App.contactsController.removeSelected();
+        }
+    });
+
+    App.ContactDetail = Ember.View.extend({ contactDidChange: (function () {
+        if (this.get('contact')) {
+            $(this.element).show(500);
+        }
+        else {
+            $(this.element).hide(500);
+        }
+    }).observes('contact')
+    });
+
+    App.UpdateContactLink = Ember.View.extend({
+        tagName: 'a',
+        click: function () {
+            App.contactsController.update(this.get('contact'));
+        }
+    });
+
+    App.AddContactLink = Ember.View.extend({
+        tagName: 'a',
+        click: function () {
+            App.contactsController.add(this.get('contact'));
         }
     });
 });

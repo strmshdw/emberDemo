@@ -1,5 +1,19 @@
 ﻿{{#view App.AddContactView}}Add{{/view}}{{#view App.RemoveContactsView}}Remove{{/view}}
 <ul>
-    {{#each App.contactsController}}<li>{{view Ember.Checkbox valueBinding="isSelected" }} {{Id}}: {{#view App.DeleteContactView contentBinding="this"
-        }}Delete: {{content.FirstName}}{{/view}}</li>{{/each}}
+    {{#each App.contactsController}}<li>{{view Ember.Checkbox valueBinding="isSelected"
+        }} {{Id}}: {{#view App.ContactItemView contentBinding="this" }}{{#if content.LastName}}{{content.LastName}}, {{/if}}{{content.FirstName}}{{/view}}</li>{{/each}}
 </ul>
+
+{{#if App.contactsController.selectedContact}}
+    {{#view App.ContactDetail contactBinding="App.contactsController.selectedContact"}}
+        First Name: {{view Ember.TextField valueBinding="contact.FirstName"}} 
+        Last Name: {{view Ember.TextField valueBinding="contact.LastName"}} 
+        Email: {{view Ember.TextField valueBinding="contact.Email"}} 
+
+        {{#if contact.Id}} 
+            {{#view App.UpdateContactLink contactBinding="contact"}}Update{{/view}}
+        {{else}}
+            {{#view App.AddContactLink contactBinding="contact"}}Add{{/view}}
+        {{/if}} 
+    {{/view}}
+{{/if}}
