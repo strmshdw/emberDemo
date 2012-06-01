@@ -3,7 +3,7 @@
     paths: {
         'jquery': 'scripts/libraries/jquery-1.6.2.min',
         'jqueryui': 'scripts/libraries/jquery-ui-1.8.11.min',
-        'ember': 'scripts/libraries/ember-0.9.8.1.min',
+        'ember': 'scripts/libraries/ember-0.9.8.1',
         'text': 'scripts/libraries/text'
     }
 });
@@ -16,11 +16,9 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
     });
 
     App.Contact = Ember.Object.extend({
-        FirstName: '',
-        LastName: '',
-        Email: '',
-        Priority: -1,
-        Phone: '',
+        FirstName: null,
+        LastName: null,
+        Email: null,
         isSelected: false,
         toJSON: function () {
             return this.getProperties('FirstName', 'LastName', 'Email', 'Priority', 'Phone');
@@ -49,7 +47,7 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
             var _this = this;
             cs.remove(id, function () {
                 var toRemove, i;
-                var content = _this.content;
+                var content = _this.get('content');
 
                 for (i = 0; i < content.length; i++) {
                     if (content[i].get('Id') == id) {
@@ -65,14 +63,17 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
         },
         removeSelected: function () {
             var i;
-            for (i = 0; i < this.content.length; i++) {
-                if (this.content[i].get('isSelected')) {
 
-                    if (this.get('selectedContact') === this.content[i]) {
+            var content = this.get('content');
+
+            for (i = 0; i < content.length; i++) {
+                if (content[i].get('isSelected')) {
+
+                    if (this.get('selectedContact') === content[i]) {
                         this.set('selectedContact', null);
                     }
 
-                    this.remove(this.content[i].get('Id'));
+                    this.remove(content[i].get('Id'));
                 }
             }
         },
@@ -88,19 +89,28 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
         }
     });
 
+    App.TextField = Ember.TextField.extend({
+        onChange: (function () {
+            this.$().val(this.get('value'));
+        }).observes('value')
+    });
+
     App.ContactsView = Ember.View.extend({ template: Ember.Handlebars.compile(template) });
 
     App.AddContactView = Ember.View.extend({
         tagName: 'a',
         attributeBindings: ['href'],
-        click: function () { App.contactsController.set('selectedContact', App.Contact.create()); }
+        click: function () {
+            App.contactsController.set('selectedContact', App.Contact.create());
+        }
     });
 
     App.ContactItemView = Ember.View.extend({
         tagName: 'span',
         eventManager: {
             click: function (event, view) {
-                App.contactsController.set('selectedContact', view.content);
+                var content = view.get('content');
+                App.contactsController.set('selectedContact', content);
             }
         }
     });
@@ -111,14 +121,16 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
         }
     });
 
-    App.ContactDetail = Ember.View.extend({ contactDidChange: (function () {
-        if (this.get('contact')) {
-            $(this.element).show(500);
-        }
-        else {
-            $(this.element).hide(500);
-        }
-    }).observes('contact')
+    App.ContactDetail = Ember.View.extend({
+        contactBinding: 'App.contactsController.selectedContact',
+        contactDidChange: (function () {
+            if (App.contactsController.get('selectedContact')) {
+                $(this.element).show(500);
+            }
+            else {
+                $(this.element).hide(500);
+            }
+        }).observes('App.contactsController.selectedContact')
     });
 
     App.UpdateContactLink = Ember.View.extend({
@@ -134,4 +146,5 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
             App.contactsController.add(this.get('contact'));
         }
     });
+
 });

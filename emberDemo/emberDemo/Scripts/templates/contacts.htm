@@ -5,10 +5,10 @@
 </ul>
 
 {{#if App.contactsController.selectedContact}}
-    {{#view App.ContactDetail contactBinding="App.contactsController.selectedContact"}}
-        First Name: {{view Ember.TextField valueBinding="contact.FirstName"}} 
-        Last Name: {{view Ember.TextField valueBinding="contact.LastName"}} 
-        Email: {{view Ember.TextField valueBinding="contact.Email"}} 
+    {{#view App.ContactDetail }}
+        First Name: {{view App.TextField valueBinding="contact.FirstName"}} 
+        Last Name: {{view App.TextField valueBinding="contact.LastName"}} 
+        Email: {{view App.TextField valueBinding="contact.Email"}} 
 
         {{#if contact.Id}} 
             {{#view App.UpdateContactLink contactBinding="contact"}}Update{{/view}}
