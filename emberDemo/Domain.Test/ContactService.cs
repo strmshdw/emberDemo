@@ -65,11 +65,11 @@ namespace Domain.Test
         {
             var contact = new Contact()
             {
-                FirstName = "Sean",
-                LastName = "Smith",
-                Email = "strmshdw@gmail.com",
-                Phone = "6026906461",
-                Priority = 1
+                firstName = "Sean",
+                lastName = "Smith",
+                emails = new List<string>() { "strmshdw@gmail.com" },
+
+
             };
             return contact;
         }
@@ -102,17 +102,18 @@ namespace Domain.Test
             }
 
             var contact = all[0];
-            contact.Email = "new@email.com";
+            contact.emails = new List<string>() { "new@email.com" };
 
             service.Update(contact);
 
             var updatedAll = service.GetAll();
-            var actual = updatedAll.Find(c => c.Id == contact.Id);
-            Assert.AreEqual(contact.Email, actual.Email);
+            var actual = updatedAll.Find(c => c.id == contact.id);
+            Assert.AreEqual(contact.emails[0], actual.emails[0]);
         }
 
         [TestMethod]
-        public void DeleteTest() {
+        public void DeleteTest()
+        {
             ContactService service = new ContactService();
             var all = service.GetAll();
 
@@ -127,7 +128,7 @@ namespace Domain.Test
 
             var updatedAll = service.GetAll();
 
-            var deleted = updatedAll.Find(c => c.Id == contact.Id);
+            var deleted = updatedAll.Find(c => c.id == contact.id);
             Assert.IsTrue(deleted == null);
         }
     }

@@ -26,7 +26,7 @@ namespace emberDemo.API
         public Contact Get(int id)
         {
             var all = Get();
-            var result = all.Find(c => c.Id == id);
+            var result = all.Find(c => c.id == id);
             return result;
         }
 
@@ -40,10 +40,10 @@ namespace emberDemo.API
         {
             var result = 0;
 
-            if (value.Id > 0)
+            if (value.id > 0)
             {
                 _service.Update(value);
-                result = value.Id;
+                result = value.id;
             }
             else
             {

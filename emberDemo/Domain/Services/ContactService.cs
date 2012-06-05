@@ -50,32 +50,33 @@ namespace Domain.Services
 
             if (All.Count > 0)
             {
-                maxId = All.Max(c => c.Id);
+                maxId = All.Max(c => c.id);
             }
 
-            contact.Id = maxId + 1;
+            contact.id = maxId + 1;
             All.Add(contact);
 
             Save();
 
-            return contact.Id;
+            return contact.id;
         }
 
         public void Update(Models.Contact contact)
         {
-            All.RemoveAll(c => c.Id == contact.Id);
+            All.RemoveAll(c => c.id == contact.id);
             All.Add(contact);
             Save();
         }
 
         public void Delete(Models.Contact contact)
         {
-            All.RemoveAll(c => c.Id == contact.Id);
+            All.RemoveAll(c => c.id == contact.id);
 
             Save();
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             All.Clear();
             Save();
         }

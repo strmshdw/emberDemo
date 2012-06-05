@@ -16,12 +16,18 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
     });
 
     App.Contact = Ember.Object.extend({
-        FirstName: null,
-        LastName: null,
-        Email: null,
+        firstName: null,
+        lastName: null,
         isSelected: false,
+        isDirty: false,
         toJSON: function () {
-            return this.getProperties('FirstName', 'LastName', 'Email', 'Priority', 'Phone');
+            var emails, i, data = this.getProperties('id', 'firstName', 'lastName');
+
+
+            emails = this.get('emails');
+            data.emails = $.map(emails, function (email) { return email.email; });
+
+            return data;
         }
     });
 
@@ -36,8 +42,9 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
         add: function (contact) {
             var _this = this;
             cs.add(contact.toJSON(), function (id) {
-                contact.set('Id', id);
+                contact.set('id', id);
                 _this.pushObject(contact);
+                contact.set('isDirty', false);
             });
         },
         getById: function (id) {
@@ -50,7 +57,7 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
                 var content = _this.get('content');
 
                 for (i = 0; i < content.length; i++) {
-                    if (content[i].get('Id') == id) {
+                    if (content[i].get('id') == id) {
                         toRemove = content[i];
                     }
                 }
@@ -73,23 +80,34 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
                         this.set('selectedContact', null);
                     }
 
-                    this.remove(content[i].get('Id'));
+                    this.remove(content[i].get('id'));
                 }
             }
         },
         update: function (contact) {
-            cs.update(contact);
+            cs.update(contact.toJSON());
+            contact.set('isDirty', false);
         },
         updateContent: function (content) {
             var i;
             this.clear();
             for (i = 0; i < content.length; i++) {
-                this.pushObject(App.Contact.create(content[i]));
+                var contact = content[i];
+
+                if (contact.emails) {
+                    contact.emails = $.map(contact.emails, function (email) { return { email: email }; });
+                }
+
+                var c = App.Contact.create(contact);
+                this.pushObject(App.Contact.create(c));
             }
         }
     });
 
     App.TextField = Ember.TextField.extend({
+        keyUp: function () {
+            this.get('content').set('isDirty', true);
+        },
         onChange: (function () {
             this.$().val(this.get('value'));
         }).observes('value')
@@ -101,7 +119,7 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
         tagName: 'a',
         attributeBindings: ['href'],
         click: function () {
-            App.contactsController.set('selectedContact', App.Contact.create());
+            App.contactsController.set('selectedContact', App.Contact.create({ emails: [], isDirty: true }));
         }
     });
 
@@ -144,6 +162,32 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
         tagName: 'a',
         click: function () {
             App.contactsController.add(this.get('contact'));
+        }
+    });
+
+    App.AddEmailView = Ember.View.extend({
+        tagName: 'a',
+        click: function () {
+            var contact = App.contactsController.get('selectedContact');
+            contact.set('isDirty', true);
+
+            var emails = contact.get('emails');
+            emails.pushObject({ email: '' });
+
+        }
+    });
+
+    App.RemoveEmailView = Ember.View.extend({
+        tagName: 'a',
+        click: function () {
+            var email = this.get('email');
+
+            var contact = App.contactsController.get('selectedContact');
+            var emails = contact.get('emails');
+            emails.removeObject(email);
+
+            contact.set('isDirty', true);
+
         }
     });
 
