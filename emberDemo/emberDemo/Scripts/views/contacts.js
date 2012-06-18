@@ -19,6 +19,8 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
         firstName: null,
         lastName: null,
         isSelected: false,
+        emails: [],
+        id: null,
         isDirty: false,
         toJSON: function () {
             var emails, i, data = this.getProperties('id', 'firstName', 'lastName');
@@ -94,9 +96,10 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
             for (i = 0; i < content.length; i++) {
                 var contact = content[i];
 
-                if (contact.emails) {
-                    contact.emails = $.map(contact.emails, function (email) { return { email: email }; });
-                }
+
+                contact.emails = contact.emails || [];
+                contact.emails = $.map(contact.emails, function (email) { return { email: email }; });
+
 
                 var c = App.Contact.create(contact);
                 this.pushObject(App.Contact.create(c));
@@ -105,12 +108,29 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
     });
 
     App.TextField = Ember.TextField.extend({
+        valid: true,
         keyUp: function () {
             this.get('content').set('isDirty', true);
+            this.validate();
         },
         onChange: (function () {
             this.$().val(this.get('value'));
-        }).observes('value')
+        }).observes('value'),
+        attributeBindings: ['style'],
+        style: (function () {
+            if (this.valid) {
+                return "";
+            }
+            else {
+                return "border:1px solid red";
+            }
+        }).property('valid'),
+        validate: function () {
+            if (this.regex) {
+                var regex = new RegExp(this.regex);
+                this.set('valid', regex.test(this.$().val()));
+            }
+        }
     });
 
     App.ContactsView = Ember.View.extend({ template: Ember.Handlebars.compile(template) });

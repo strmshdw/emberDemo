@@ -7,8 +7,9 @@
 {{#if App.contactsController.selectedContact}}
     {{#if App.contactsController.selectedContact.isDirty}}<div style="color:Red;">Contact has changed.</div>{{/if}}
     {{#view App.ContactDetail contactBinding="App.contactsController.selectedContact"}}
-        First Name: {{view App.TextField valueBinding="contact.firstName" contentBinding="contact"}} 
+        First Name: {{view App.TextField valueBinding="contact.firstName" contentBinding="contact" regex="^(?=\s*\S).*$"}} 
         Last Name: {{view App.TextField valueBinding="contact.lastName"  contentBinding="contact"}} 
+        Phone: {{view App.TextField valueBinding="contant.phone" contentBinding="contact"}}
         <div>Emails: {{#each contact.emails}}
         <div>
             {{view App.TextField valueBinding="email" contentBinding="App.contactsController.selectedContact"}}
