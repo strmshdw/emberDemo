@@ -11,6 +11,7 @@ namespace Domain.Services
     public class ContactService : IContactService
     {
         const string path = "c:\\temp\\contacts.json";
+        static object o = new object();
 
         #region IContactService Members
 
@@ -29,18 +30,20 @@ namespace Domain.Services
 
         public List<Models.Contact> GetAll()
         {
-            using (var reader = new StreamReader(File.Open(path, FileMode.OpenOrCreate)))
+            lock (o)
             {
-                var data = reader.ReadToEnd();
-
-                if (!String.IsNullOrEmpty(data))
+                using (var reader = File.OpenText(path))
                 {
-                    System.Web.Script.Serialization.JavaScriptSerializer jss = new System.Web.Script.Serialization.JavaScriptSerializer();
-                    var result = jss.Deserialize<List<Contact>>(data);
-                    return result;
+                    var data = reader.ReadToEnd();
+
+                    if (!String.IsNullOrEmpty(data))
+                    {
+                        System.Web.Script.Serialization.JavaScriptSerializer jss = new System.Web.Script.Serialization.JavaScriptSerializer();
+                        var result = jss.Deserialize<List<Contact>>(data);
+                        return result;
+                    }
                 }
             }
-
             return new List<Contact>();
         }
 
@@ -86,9 +89,12 @@ namespace Domain.Services
             var jss = new JavaScriptSerializer();
             var data = jss.Serialize(All);
 
-            using (var writer = new StreamWriter(File.Open(path, FileMode.Create)))
+            lock (o)
             {
-                writer.Write(data);
+                using (var writer = new StreamWriter(File.Open(path, FileMode.Create)))
+                {
+                    writer.Write(data);
+                }
             }
         }
 

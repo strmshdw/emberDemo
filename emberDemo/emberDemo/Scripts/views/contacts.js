@@ -67,12 +67,10 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
                 if (toRemove) {
                     _this.removeObject(toRemove);
                 }
-
             });
         },
         removeSelected: function () {
             var i;
-
             var content = this.get('content');
 
             for (i = 0; i < content.length; i++) {
@@ -114,7 +112,7 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
         onChange: (function () {
             this.$().val(this.get('value'));
         }).observes('value'),
-        attributeBindings: ['style'],
+        attributeBindings: ['style', 'name', 'placeholder'],
         style: (function () {
             if (this.valid) {
                 return "";
@@ -143,32 +141,53 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
 
     App.ContactItemView = Ember.View.extend({
         tagName: 'li',
-        classNames:['contact'],
+        classNames: ['contact'],
+        content: null,
         eventManager: {
             click: function (event, view) {
                 var content = view.get('content');
                 App.contactsController.set('selectedContact', content);
             }
-        }
+        },
+        contentChanged: (function () {
+            if (this.getPath('content.isDirty')) {
+                this.$().css('background-color', '#c66');
+            }
+            else {
+                this.$().css('background-color', '')
+            }
+        }).observes('content.isDirty'),
+        isSelected: (function () {
+            if (this.get('content') === App.contactsController.selectedContact) {
+                this.$().css('background-color', '#999');
+            }
+            else {
+                this.$().css('background-color', '')
+            }
+
+            if (this.getPath('content.isDirty')) {
+                this.$().css('background-color', '#c66')
+            }
+            
+        }).observes('App.contactsController.selectedContact')
+
     });
 
     App.RemoveContactsView = Ember.View.extend({
-        tagName:'a',
+        tagName: 'a',
         click: function () {
             App.contactsController.removeSelected();
         }
     });
 
     App.ContactDetail = Ember.View.extend({
-        contactBinding: 'App.contactsController.selectedContact',
-        contactDidChange: (function () {
-            if (App.contactsController.get('selectedContact')) {
-                $(this.element).show(500);
-            }
-            else {
-                $(this.element).hide(500);
-            }
-        }).observes('App.contactsController.selectedContact')
+        contactBinding: 'App.contactsController.selectedContact'
+    });
+
+    App.DetailView = Ember.View.extend({
+        didInsertElement: function () {
+            this.$().show('slow');
+        }
     });
 
     App.UpdateContactLink = Ember.View.extend({
