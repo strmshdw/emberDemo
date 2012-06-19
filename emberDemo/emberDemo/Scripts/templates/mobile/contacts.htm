@@ -1,0 +1,151 @@
+﻿<style>
+    body
+    {
+    	font-size:16px;
+    	}
+    	
+    .items
+    {
+        float: left;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid #888;
+        font-size: 18px;
+        background-color: #ddd;
+        width: 100%;
+    }
+    
+    .items li
+    {
+        border: 1px solid #888;
+        border-top: 0;
+        padding: 5px 0;
+    }
+    
+    .items li:hover
+    {
+        background-color: #eee;
+    }
+    
+    .menu
+    {
+        float: left;
+        width: 100%;
+    }
+    
+    .menu a
+    {
+        width: 50%;
+        display: inline-block;
+        height: 50px;
+        text-align: center;
+        font-size: 24px;
+    }
+    
+    .contact
+    {
+    }
+    
+    .detail
+    {
+        width: 100%;
+        float: right;
+        padding: 2%;
+        padding-top: 68px;
+        display: none;
+        border-left: 1px solid #888;
+        min-height: 400px;
+    }
+    
+    .itemContainer
+    {
+        width: 100%;
+        float: left;
+    }
+    
+    
+    .field
+    {
+        width: 100%;
+        float: left;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    .field input
+    {
+        width: 100%;
+        float: right;
+        font-size: 16px;
+        padding: 5px 0;
+    }
+    
+    .email
+    {
+        width: 100%;
+        float: left;
+    }
+    
+    .email a
+    {
+        width: 20%;
+        text-align: center;
+        display: inline-block;
+        float: left;
+        font-size: 18px;
+        line-height:25px;
+    }
+    
+    .email input
+    {
+        width: 79%;
+        font-size: 16px;
+        padding: 5px 0;
+        float: left;
+    }
+    
+    a
+    {
+    	font-size: 16px;
+        padding: 5px 0;
+        width:100px;
+        float: left;
+        text-align:center;
+    	}
+    
+    .emails
+    {
+    	float:left;
+    	width:100%;
+    	}
+</style>
+<div class="itemContainer">
+    <div class="menu">
+        {{#view App.AddContactView}}Add{{/view}}{{#view App.RemoveContactsView}}Remove{{/view}}</div>
+    <ul class="items">
+        {{#each App.contactsController}}{{#view App.ContactItemView contentBinding="this"
+        }}{{view Ember.Checkbox valueBinding="content.isSelected" }} {{Id}}: {{#if content.lastName}}{{content.lastName}},
+        {{/if}}{{content.firstName}}{{/view}}{{/each}}
+    </ul>
+</div>
+{{#if App.contactsController.selectedContact}} {{#view App.DetailView classNames="detail"}}
+{{#view App.ContactDetail contactBinding="App.contactsController.selectedContact"}}
+<div class="field">
+    {{view App.TextField valueBinding="contact.firstName" contentBinding="contact" name="fname"
+    placeholder="First Name" regex="^(?=\s*\S).*$"}}
+</div>
+<div class="field">
+    {{view App.TextField valueBinding="contact.lastName" contentBinding="contact" name="lname"
+    placeholder="Last Name"}}
+</div>
+<div>
+    
+    {{#each contact.emails}}
+    <div class="email">
+        {{view App.TextField valueBinding="email" contentBinding="App.contactsController.selectedContact"
+        placeholder="Email"}} {{#view App.RemoveEmailView emailBinding="this"}}Remove{{/view}}
+    </div>
+    {{/each}} {{#view App.AddEmailView}}Add Email{{/view}}
+{{#if contact.id}} {{#view App.UpdateContactLink contactBinding="contact"}}Update{{/view}}
+{{else}} {{#view App.AddContactLink contactBinding="contact"}}Add{{/view}} {{/if}}
+{{/view}} {{/view}} </div>{{/if}}

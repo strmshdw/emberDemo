@@ -17,9 +17,16 @@ namespace emberDemo.API
             _service = new ContactService();
         }
 
-        public List<Contact> Get()
+        public List<Contact> Get( int page = -1, string search = "")
         {
+
             var result = _service.GetAll();
+            
+            if (page != -1)
+            {
+                result = result.Skip(page * 5).Take(5).ToList();
+            }
+
             return result;
         }
 

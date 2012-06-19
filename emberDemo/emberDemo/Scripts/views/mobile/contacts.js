@@ -8,7 +8,7 @@
     }
 });
 
-require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text!scripts/templates/contacts.htm'], function ($, jqueryui, _ember, cs, template) {
+require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text!scripts/templates/mobile/contacts.htm'], function ($, jqueryui, _ember, cs, template) {
     window.App = Ember.Application.create({ rootElement: '#app',
         ready: function () {
             App.contactsController.getAll();
@@ -24,6 +24,7 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
         isDirty: false,
         toJSON: function () {
             var emails, i, data = this.getProperties('id', 'firstName', 'lastName');
+
 
             emails = this.get('emails');
             data.emails = $.map(emails, function (email) { return email.email; });
