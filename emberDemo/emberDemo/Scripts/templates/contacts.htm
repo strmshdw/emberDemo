@@ -1,26 +1,88 @@
-﻿{{#view App.AddContactView}}Add{{/view}}{{#view App.RemoveContactsView}}Remove{{/view}}
-<ul>
-    {{#each App.contactsController}}<li>{{view Ember.Checkbox valueBinding="isSelected"
-        }} {{Id}}: {{#view App.ContactItemView contentBinding="this" }}{{#if content.lastName}}{{content.lastName}}, {{/if}}{{content.firstName}}{{/view}}</li>{{/each}}
-</ul>
-
+﻿<style>
+    .items
+    {
+        float: left;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid #888;
+        font-size: 18px;
+        background-color: #ddd;
+        width: 100%;
+    }
+    
+    .items li
+    {
+        height: 2em;
+        border: 1px solid #888;
+        border-top: 0;
+    }
+    
+    .items li:hover
+    {
+        background-color: #eee;
+    }
+    
+    .menu
+    {
+        float: left;
+        width: 100%;
+    }
+    
+    .menu a
+    {
+        width: 50%;
+        display: inline-block;
+        height: 50px;
+        text-align: center;
+        font-size: 24px;
+    }
+    
+    .contact
+    {
+    }
+    
+    .detail
+    {
+        width: 49%;
+        float: right;
+    }
+    
+    .itemContainer
+    {
+        width: 50%;
+        float: left;
+    }
+</style>
+<div class="itemContainer">
+    <div class="menu">
+        {{#view App.AddContactView}}Add{{/view}}{{#view App.RemoveContactsView}}Remove{{/view}}</div>
+    <ul class="items">
+        {{#each App.contactsController}}{{#view App.ContactItemView contentBinding="this"
+        }}{{view Ember.Checkbox valueBinding="content.isSelected" }} {{Id}}: {{#if content.lastName}}{{content.lastName}},
+        {{/if}}{{content.firstName}}{{/view}}{{/each}}
+    </ul>
+</div>
 {{#if App.contactsController.selectedContact}}
-    {{#if App.contactsController.selectedContact.isDirty}}<div style="color:Red;">Contact has changed.</div>{{/if}}
-    {{#view App.ContactDetail contactBinding="App.contactsController.selectedContact"}}
-        First Name: {{view App.TextField valueBinding="contact.firstName" contentBinding="contact" regex="^(?=\s*\S).*$"}} 
-        Last Name: {{view App.TextField valueBinding="contact.lastName"  contentBinding="contact"}} 
-        Phone: {{view App.TextField valueBinding="contant.phone" contentBinding="contact"}}
-        <div>Emails: {{#each contact.emails}}
+<div class="detail">
+    {{#if App.contactsController.selectedContact.isDirty}}<div style="color: Red;">
+        Contact has changed.</div>
+    {{/if}} {{#view App.ContactDetail contactBinding="App.contactsController.selectedContact"}}
+    <div class="field">
+        First Name: {{view App.TextField valueBinding="contact.firstName" contentBinding="contact"
+        regex="^(?=\s*\S).*$"}}
+    </div>
+    <div class="field">
+        Last Name: {{view App.TextField valueBinding="contact.lastName" contentBinding="contact"}}
+    </div>
+    <div>
+        Emails: {{#each contact.emails}}
         <div>
             {{view App.TextField valueBinding="email" contentBinding="App.contactsController.selectedContact"}}
             {{#view App.RemoveEmailView emailBinding="this"}}Remove{{/view}}
-        </div>{{/each}}
-        {{#view App.AddEmailView}}Add Email{{/view}}</div>
-
-        {{#if contact.id}} 
-            {{#view App.UpdateContactLink contactBinding="contact"}}Update{{/view}}
-        {{else}}
-            {{#view App.AddContactLink contactBinding="contact"}}Add{{/view}}
-        {{/if}} 
+        </div>
+        {{/each}} {{#view App.AddEmailView}}Add Email{{/view}}</div>
+    {{#if contact.id}} {{#view App.UpdateContactLink contactBinding="contact"}}Update{{/view}}
+    {{else}} {{#view App.AddContactLink contactBinding="contact"}}Add{{/view}} {{/if}}
     {{/view}}
+</div>
 {{/if}}

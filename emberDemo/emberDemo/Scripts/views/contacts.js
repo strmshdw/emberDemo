@@ -96,10 +96,8 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
             for (i = 0; i < content.length; i++) {
                 var contact = content[i];
 
-
                 contact.emails = contact.emails || [];
                 contact.emails = $.map(contact.emails, function (email) { return { email: email }; });
-
 
                 var c = App.Contact.create(contact);
                 this.pushObject(App.Contact.create(c));
@@ -144,7 +142,8 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
     });
 
     App.ContactItemView = Ember.View.extend({
-        tagName: 'span',
+        tagName: 'li',
+        classNames:['contact'],
         eventManager: {
             click: function (event, view) {
                 var content = view.get('content');
@@ -154,6 +153,7 @@ require(['jquery', 'jqueryui', 'ember', 'scripts/services/contactService', 'text
     });
 
     App.RemoveContactsView = Ember.View.extend({
+        tagName:'a',
         click: function () {
             App.contactsController.removeSelected();
         }
